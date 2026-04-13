@@ -1,0 +1,27 @@
+services:
+  train:
+    image: milo:v0.1
+    container_name: milo-train
+    runtime: nvidia
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    volumes:
+      # Mount host data (Read-Write to allow 3DGS point cloud caching)
+      - ~/data/public_custom_tandt:/workspace/data
+      # Persist output to the milo/output directory
+      - ./milo/output:/workspace/milo/output
+    working_dir: /workspace/milo
+    command: >
+      python train.py 
+      -s /workspace/data/Ignatius 
+      -m /workspace/milo/output/public_custom_tandt/outdoor/Ignatius 
+      --imp_metric outdoor 
+      --rasterizer radegs 
+      --log_interval 200
+    stdin_open: true
+    tty: true
